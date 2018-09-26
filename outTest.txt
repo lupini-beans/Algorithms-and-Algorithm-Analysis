@@ -1,0 +1,10 @@
+* Interpreted Graph:
+weighted
+directed
+begin
+A B C D E 
+A B 1.0
+B C 2.3
+C A 2.2
+E D 1.9
+end

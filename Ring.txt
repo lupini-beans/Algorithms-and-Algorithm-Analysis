@@ -1,0 +1,23 @@
+unweighted
+undirected
+begin
+A B C D E F
+A B
+B C
+C D
+D E
+E F
+F A
+end
+hasEdge A B
+true
+hasEdge B Q
+false
+addEdge B Q
+false
+addEdge A B
+false
+deleteEdge A B
+true
+deleteEdge A B
+false

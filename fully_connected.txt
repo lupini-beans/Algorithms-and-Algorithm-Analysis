@@ -1,0 +1,25 @@
+* This graph checks isFullyConnected and isDense
+* It also checks deleting vertices (true and false cases)
+unweighted
+undirected
+begin
+A B C D
+A B
+A C
+B C
+B D
+C D
+D A
+end
+isFullyConnected
+true
+deleteVertex C
+true
+deleteVertex X
+false
+countEdges
+3
+isSparse
+false
+isDense
+true

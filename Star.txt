@@ -1,0 +1,12 @@
+unweighted
+undirected
+begin
+A B C D E F
+A F
+B F
+C F
+D F
+E F
+end
+topo
+Star

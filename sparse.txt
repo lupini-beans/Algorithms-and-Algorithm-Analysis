@@ -1,0 +1,33 @@
+* This graph tests isSparse (2 edges with 7 vertices)
+* as well as confirms that if an edge is added in a weighted
+* in a place where the edge already exists the weight will be replace
+* if it is different than the previous weight
+weighted
+directed
+begin
+L M N O P Q R
+L M 9.9999
+Q R 7.091
+end
+isSparse
+true
+isDense
+false
+countVertices
+7
+hasEdge Q R
+true
+addEdge Q R 8.02
+true
+addEdge Q R 8.02
+false
+addEdge L Q 2.13
+true
+addEdge R N 6.901
+true
+deleteEdge R N
+true
+isConnected
+false
+isFullyConnected
+false
