@@ -7,7 +7,7 @@ class AdjacencyList(object):
     It stores the graph as a Linked List in an adjacency list format.
     """
 
-    def __init__(self, weighted=False, directed=False, vertices=[]):
+    def __init__(self, weighted=False, directed=False, vertices=None):
         """Creates an empty graph.
 
         Weighted and Directed are defaulted to False.
@@ -73,7 +73,7 @@ class AdjacencyList(object):
         elif (not self.weighted) and self.hasEdge(vertex1, vertex2[0]):
             print(f"Adding edge {vertex1} --> {vertex2}")
             print(f"Failed: {vertex1} --> {vertex2} already exists")
-        elif self.weighted and self.hasEdge(vertex1, vertex2[0]) \
+        elif self.weighted and self.hasEdge(vertex1, vertex2[0])\
                 and not self.directed:
             print(f"Updating edge {vertex1} --> {vertex2}")
             for vertex in self.graph:
@@ -123,7 +123,7 @@ class AdjacencyList(object):
                             if edge[0] == vertex1 and edge[1] != vertex2[1]:
                                 edge[1] = vertex2[1]
                                 edge_added = True
-            if edge_added == False:
+            if not edge_added:
                 print(f"Failed: {vertex1} <--> {vertex2[0]} with "
                       f"weight {vertex2[1]} already exists")
             else:
@@ -287,7 +287,7 @@ class AdjacencyList(object):
 
         :return: The number of vertices
         """
-        return(len(self.graph))
+        return len(self.graph)
 
     def countEdges(self):
         """Counts the number of edges in the graph.
@@ -303,7 +303,7 @@ class AdjacencyList(object):
 
 # Additional Methods___________________________________________________________
     def __find_path(self, start, end, path=None):
-        if path == None:
+        if path is None:
             path = []
         path.append(start)
         if start == end:
@@ -330,7 +330,6 @@ class AdjacencyList(object):
 
         :return: Fully connected mesh, star, or ring
         """
-        center = None
         edge_max = self.countVertices() - 1
         topo_type = None
         twos = True
@@ -340,8 +339,9 @@ class AdjacencyList(object):
             for row in self.graph:
                 if (row.get_length() - 1) == edge_max:
                     center = row.get_head()
-                    for row in self.graph:
-                        if row.get_head() != center and row.get_length() == 2:
+                    for rows in self.graph:
+                        if rows.get_head() != center and\
+                                rows.get_length() == 2:
                             topo_type = "Star"
                 while twos:
                     if not row.get_length() == 3:
@@ -350,7 +350,7 @@ class AdjacencyList(object):
                         break
         else:
             topo_type = "No topology type found"
-        if twos and topo_type == None:
+        if twos and topo_type is None:
             topo_type = "Ring"
         print(topo_type)
         return topo_type
@@ -374,8 +374,8 @@ class AdjacencyList(object):
                     break
             if is_connected:
                 for row in self.graph:
-                    if not(self.__find_path(start, row.get_head(), \
-                                            path=[]) == None):
+                    if not(self.__find_path(start, row.get_head(),
+                                            path=[]) is None):
                         continue
                     else:
                         is_connected = False
@@ -409,32 +409,32 @@ class AdjacencyList(object):
         print("_" * 41)
         return is_fully_connected
 
-    def readGraph(self, fileName):
+    def readGraph(self, file_name):
         """Reads the graph from a given file.
 
-        :param fileName: Name of the file
+        :param file_name: Name of the file
         :return: Dictionary of graph values
         """
-        inputParams = {'Weighted': None,
-                       'Directional': None,
-                       'Vertices': [],
-                       'Edges': [],
-                       'Instructions': [],
-                       'Results': []}
-        with open(fileName) as f:
+        input_params = {'Weighted': None,
+                        'Directional': None,
+                        'Vertices': [],
+                        'Edges': [],
+                        'Instructions': [],
+                        'Results': []}
+        with open(file_name) as f:
             weighted = False
-            weightIndex = 0
+            weight_index = 0
             directional = False
-            directionalIndex = 0
-            graphBegin = False
-            graphBeginIndex = 0
-            verticesIndex = 0
-            graphEnd = False
-            graphEndIndex = 0
+            directional_index = 0
+            graph_begin = False
+            graph_begin_index = 0
+            vertices_index = 0
+            graph_end = False
+            graph_end_index = 0
             instructions = 0
-            instructionIndex = 0
+            instruction_index = 0
             results = 0
-            resultIndex = 0
+            result_index = 0
             lines = []
             for line in f.readlines():
                 line = line.strip('\n')
@@ -445,70 +445,70 @@ class AdjacencyList(object):
                 elif not weighted:
                     if line == 'weighted' or line == 'unweighted':
                         weighted = True
-                        weightIndex = index
+                        weight_index = index
                     if line == 'weighted':
-                        inputParams['Weighted'] = True
+                        input_params['Weighted'] = True
                     elif line == 'unweighted':
-                        inputParams['Weighted'] = False
+                        input_params['Weighted'] = False
                     else:
                         raise RuntimeError("No weight found")
-                elif (index == weightIndex+1) and (not directional):
+                elif (index == weight_index+1) and (not directional):
                     if line == 'directed' or line == 'undirected':
                         directional = True
-                        directionalIndex = index
+                        directional_index = index
                     if line == 'directed':
-                        inputParams['Directional'] = True
+                        input_params['Directional'] = True
                     elif line == 'undirected':
-                        inputParams['Directional'] = False
-                elif (index == directionalIndex+1) and (not graphBegin):
-                    graphBegin = True
-                    graphBeginIndex = index
-                elif graphBegin and index == graphBeginIndex+1:
+                        input_params['Directional'] = False
+                elif (index == directional_index+1) and (not graph_begin):
+                    graph_begin = True
+                    graph_begin_index = index
+                elif graph_begin and index == graph_begin_index+1:
                     vertices = line.split()
-                    inputParams['Vertices'].extend(vertices)
-                    verticesIndex = index
-                elif index > verticesIndex and not graphEnd:
+                    input_params['Vertices'].extend(vertices)
+                    vertices_index = index
+                elif index > vertices_index and not graph_end:
                     if not line == 'end':
                         edge = line.split()
-                        inputParams['Edges'].append(edge)
+                        input_params['Edges'].append(edge)
                     else:
-                        graphEnd = True
-                        graphEndIndex = index
-                elif index == graphEndIndex+1 or \
-                        (index == resultIndex+1 and results > 0):
+                        graph_end = True
+                        graph_end_index = index
+                elif index == graph_end_index+1 or \
+                        (index == result_index+1 and results > 0):
                     struct = line.split()
-                    inputParams['Instructions'].append(struct)
-                    instructionIndex = index
+                    input_params['Instructions'].append(struct)
+                    instruction_index = index
                     instructions += 1
-                elif index == instructionIndex+1 and instructions > 0:
-                    inputParams['Results'].append(line.capitalize())
-                    resultIndex = index
+                elif index == instruction_index+1 and instructions > 0:
+                    input_params['Results'].append(line.capitalize())
+                    result_index = index
                     results += 1
         print(f"_________________________________________\n"
               f"Input Parameters from {fileName}:")
-        for item in inputParams:
-            print(f"{item}: {inputParams[item]}")
+        for parameter in input_params:
+            print(f"{parameter}: {input_params[parameter]}")
         print("_" * 41, "\n")
-        self.__write_graph(inputParams)
-        return inputParams
+        self.__write_graph(input_params)
+        return input_params
 
 # Additional Method ___________________________________________________________
-    def __write_graph(self, inputParams):
+    def __write_graph(self, input_params):
         results = []
         true_result = []
         found_struct = []
-        self.weighted = inputParams['Weighted']
-        self.directed = inputParams['Directional']
-        for vertex in inputParams['Vertices']:
+        self.weighted = input_params['Weighted']
+        self.directed = input_params['Directional']
+        for vertex in input_params['Vertices']:
             self.addVertex(vertex)
-        for edge in inputParams['Edges']:
+        for edge in input_params['Edges']:
             if self.weighted:
                 self.addEdge(edge[0], [edge[1], edge[2]])
             else:
                 self.addEdge(edge[0], edge[1])
-        if inputParams['Instructions']:
+        if input_params['Instructions']:
             print("\n______Executing Instructions______\n")
-        for instruction in inputParams['Instructions']:
+        for instruction in input_params['Instructions']:
             found_struct.append(instruction)
             if instruction[0] == "hasEdge":
                 results.append(str(self.hasEdge(instruction[1],
@@ -544,40 +544,39 @@ class AdjacencyList(object):
                 results.append(self.topo())
             else:
                 raise RuntimeError("No instruction found")
-        if inputParams['Results']:
+        if input_params['Results']:
             print("\n______Comparing Results______\n")
             print("Expected Results: ")
-            for result in inputParams['Results']:
+            for result in input_params['Results']:
                 true_result.append(result)
-            for index, instruction in enumerate(inputParams['Instructions']):
+            for index, instruction in enumerate(input_params['Instructions']):
                 print(f"\t{instruction}: {true_result[index]}")
             print("\nFound Results:")
             for index, struct in enumerate(found_struct):
                 print(f"\t{struct}: {results[index]}")
-            if results == inputParams['Results']:
+            if results == input_params['Results']:
                 print("\nSuccess: Expected values match results\n\n")
             else:
                 print("\nFailed: Expected values do not match results\n\n")
-#______________________________________________________________________________
 
     def printGraph(self):
         """Formats the graph to be able to print or output to a file.
 
         :return: List of items to be printed
         """
-        toPrint = []
+        to_print = []
         vertices = ""
         edges = ""
-        edgePairs = []
-        toPrint.append("* Interpreted Graph:\n")
+        edge_pairs = []
+        to_print.append("* Interpreted Graph:\n")
         if self.weighted:
-            toPrint.append("weighted\n")
+            to_print.append("weighted\n")
         else:
-            toPrint.append("unweighted\n")
+            to_print.append("unweighted\n")
         if self.directed:
-            toPrint.append("directed\n")
+            to_print.append("directed\n")
         else:
-            toPrint.append("undirected\n")
+            to_print.append("undirected\n")
         toPrint.append("begin\n")
         for vertex in self.vertices:
             vertices += str(vertex) + " "
@@ -588,14 +587,16 @@ class AdjacencyList(object):
                 for edge in row:
                     if row.get_head() != edge[0]:
                         if not self.directed:
-                            if (edge[0], row.get_head()) not in edgePairs:
+                            if (edge[0], row.get_head()) not in edge_pairs:
                                 if self.weighted:
-                                    edgePairs.append((row.get_head(), edge[0]))
+                                    edge_pairs.append((row.get_head(),
+                                                      edge[0]))
                                     edges += str(row.get_head()) + " " \
-                                             + str(edge[0]) + " " \
-                                             + str(edge[1]) + "\n"
+                                        + str(edge[0]) + " " \
+                                        + str(edge[1]) + "\n"
                                 else:
-                                    edgePairs.append((row.get_head(), edge[0]))
+                                    edge_pairs.append((row.get_head(),
+                                                       edge[0]))
                                     edges += str(row.get_head() + " "
                                                  + str(edge[0]) + "\n")
                         else:
@@ -608,7 +609,7 @@ class AdjacencyList(object):
                                          + " " + str(edge[0]) + "\n"
         toPrint.append(edges)
         toPrint.append("end")
-        return toPrint
+        return to_print
 
 
 if "__main__" == __name__:
