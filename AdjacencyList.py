@@ -7,7 +7,7 @@ class AdjacencyList(object):
     It stores the graph as a Linked List in an adjacency list format.
     """
 
-    def __init__(self, weighted=False, directed=False, vertices=None):
+    def __init__(self, weighted=False, directed=False):
         """Creates an empty graph.
 
         Weighted and Directed are defaulted to False.
@@ -18,7 +18,9 @@ class AdjacencyList(object):
         self.graph = []
         self.weighted = weighted
         self.directed = directed
-        self.vertices = vertices
+        self.vertices = []
+        self.prims = {}
+        self.prims_vertices = []
 
     def __str__(self):
         """Formats the object into a string.
@@ -301,6 +303,75 @@ class AdjacencyList(object):
             count = int(count/2)
         return count
 
+    def find_index(self, lst, weight):
+        index = 0
+        for item in lst:
+            while weight > item[1] and index<len(lst):
+                index+=1
+        return index
+
+    def prims_tree(self):
+        if not self.weighted:
+            return
+        #Create a dictionary to reference of the graph
+        graph_dictionary = {}
+        for row in self.graph:
+            key = row.get_head()
+            graph_dictionary[key] = []
+            for edge in row:
+                if edge[0] != key:
+                    if len(graph_dictionary[key]) == 0:
+                        graph_dictionary[key].append(edge)
+                    else:
+                        index = self.find_index(graph_dictionary[key], edge[1])
+                        graph_dictionary[key].insert(index, edge)
+
+
+
+        #1. Initiate the spanning tree vertices list to a random vertex
+        #  from the input vertices list
+        self.prims_vertices.append(self.vertices[0])
+        self.prims[self.vertices[0]] = []
+
+        #2. Initiate an empty dictionary for the spanning tree edges
+            #Ignored - added to initialization of graph
+
+        #3. Iterate through the list of input vertices from 1 to (length - 1)
+        # (leave the last vertex because it will be caught later) (for loop)
+        for i in range(1, len(self.vertices)):
+            lows = []
+            lowest = [0, [0, float('inf')]]
+            #3.a. Generate a list of valid edges to search weights (for loop)
+                #3.a.(1) Confirm that the starting vertex is already in the spanning tree vertices
+                #3.a.(2) Confirm that the ending vertex is not in the spanning tree vertices
+            for vertex in self.prims_vertices:
+                if len(graph_dictionary[vertex]) >= 1:
+                    if graph_dictionary[vertex][0][0] not in self.prims_vertices:
+                        print("Vertex:", vertex, "\nEdge:", graph_dictionary[vertex][0])
+                        lows.append([vertex, graph_dictionary[vertex][0]])
+
+            #3.a.(3) Find the smallest weight
+            for low in lows:
+                if lowest:
+                    if float(low[1][1]) < float(lowest[1][1]):
+                        lowest = low
+                else:
+                    lowest = low
+            #3.b. Add the resulted vertex into spanning tree vertices list
+            self.prims[lowest[0]] = lowest[1]
+
+            #3.c. Add the resulted edge into the spanning tree edge dictionary
+            self.prims_vertices.append(lowest[1][0])
+
+            #Extra: Pop off the edge used
+            if len(graph_dictionary[lowest[0]]) >= 1:
+                graph_dictionary[lowest[0]].pop(0)
+                graph_dictionary[lowest[1][0]].remove([lowest[0], lowest[1][1]])
+
+        #4. Return my edge dictionary
+        return self.prims
+
+
 # Additional Methods___________________________________________________________
     def __find_path(self, start, end, path=None):
         if path is None:
@@ -577,11 +648,11 @@ class AdjacencyList(object):
             to_print.append("directed\n")
         else:
             to_print.append("undirected\n")
-        toPrint.append("begin\n")
+        to_print.append("begin\n")
         for vertex in self.vertices:
             vertices += str(vertex) + " "
         vertices += "\n"
-        toPrint.append(vertices)
+        to_print.append(vertices)
         for row in self.graph:
             if row.get_length() > 1:
                 for edge in row:
@@ -607,8 +678,8 @@ class AdjacencyList(object):
                             else:
                                 edges += str(row.get_head()) \
                                          + " " + str(edge[0]) + "\n"
-        toPrint.append(edges)
-        toPrint.append("end")
+        to_print.append(edges)
+        to_print.append("end")
         return to_print
 
 
@@ -616,7 +687,11 @@ if "__main__" == __name__:
     graph = AdjacencyList()
     fileName = input("Input File Name: ")
     graph.readGraph(fileName)
+    print('type: ', type(graph))
     print(graph)
     toPrint = graph.printGraph()
     for item in toPrint:
         print(item.rstrip())
+    graph_dict = graph.prims_tree()
+    print("\nDictionary:")
+    print(graph_dict)

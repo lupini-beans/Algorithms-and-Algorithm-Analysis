@@ -178,6 +178,8 @@ class DictGraph(object):
         edgeLength = 0
         for item in self.graph:
             edgeLength = edgeLength + len(self.graph[item])
+        if not graph.directional:
+            edgeLength = int(edgeLength/2)
         return edgeLength
 
 # Addition Method_______________________________________________________________________________________________________
@@ -230,7 +232,7 @@ class DictGraph(object):
         if isFullyConnected:
             for vertex1 in self.graph:
                 for vertex2 in vertices:
-                    if not self.hasEdge(vertex1, vertex2):
+                    if not self.hasEdge(vertex1, vertex2) and vertex1 != vertex2:
                         print(f"{vertex1} is not connected to {vertex2}")
                         isFullyConnected = False
                         break
@@ -317,7 +319,7 @@ class DictGraph(object):
         for item in inputParams:
             print(f"{item}: {inputParams[item]}")
         print("_" * 41, "\n")
-        self.__writeGraph(inputParams)
+        self.__write_graph(inputParams)
         return inputParams
 
 # Additional Method_____________________________________________________________________________________________________
@@ -366,7 +368,7 @@ class DictGraph(object):
             elif command[0] == "isSparse":
                 results.append(str(self.isSparse()))
             elif command[0] == "isDense":
-                results.append(self.isDense())
+                results.append(str(self.isDense()))
             elif command[0] == "countVertices":
                 results.append(str(self.countVertices()))
             elif command[0] == "countEdges":
